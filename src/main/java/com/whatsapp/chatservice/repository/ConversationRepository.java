@@ -82,14 +82,13 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
             lm.last_message_created_at AS lastMessageCreatedAt,
             COALESCE(uc.unread_count, 0) AS unreadCount,
             ou.other_user_id AS otherUserId,
-            u.display_name AS otherUserDisplayName,
-            u.profile_picture_url AS otherUserProfilePictureUrl
+            CAST(NULL AS NVARCHAR(100)) AS otherUserDisplayName,
+            CAST(NULL AS NVARCHAR(500)) AS otherUserProfilePictureUrl
         FROM conversations c
         JOIN UserConversations uc2 ON c.id = uc2.conversation_id
         LEFT JOIN LastMessages lm ON c.id = lm.conversation_id AND lm.rn = 1
         LEFT JOIN UnreadCounts uc ON c.id = uc.conversation_id
         LEFT JOIN OtherUsers ou ON c.id = ou.conversation_id
-        LEFT JOIN users u ON ou.other_user_id = u.id
         ORDER BY COALESCE(lm.last_message_created_at, c.created_at) DESC
         """,
         nativeQuery = true

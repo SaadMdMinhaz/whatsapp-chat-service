@@ -9,8 +9,6 @@ CREATE TABLE message_status (
     CONSTRAINT uq_message_status UNIQUE (message_id, recipient_id),
     CONSTRAINT fk_ms_message FOREIGN KEY (message_id)
         REFERENCES messages (id) ON DELETE CASCADE,
-    CONSTRAINT fk_ms_recipient FOREIGN KEY (recipient_id)
-        REFERENCES users (id) ON DELETE NO ACTION,
     CONSTRAINT ck_ms_status CHECK (status IN ('SENT', 'DELIVERED', 'READ'))
 );
 

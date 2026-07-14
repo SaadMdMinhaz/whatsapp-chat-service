@@ -6,9 +6,7 @@ CREATE TABLE conversation_participants (
     CONSTRAINT pk_conversation_participants PRIMARY KEY CLUSTERED (id),
     CONSTRAINT uq_conversation_participants UNIQUE (conversation_id, user_id),
     CONSTRAINT fk_cp_conversation FOREIGN KEY (conversation_id)
-        REFERENCES conversations (id) ON DELETE CASCADE,
-    CONSTRAINT fk_cp_user FOREIGN KEY (user_id)
-        REFERENCES users (id) ON DELETE NO ACTION
+        REFERENCES conversations (id) ON DELETE CASCADE
 );
 
 CREATE NONCLUSTERED INDEX ix_cp_user_id

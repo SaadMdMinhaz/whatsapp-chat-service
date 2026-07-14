@@ -15,8 +15,6 @@ CREATE TABLE messages (
     CONSTRAINT pk_messages PRIMARY KEY CLUSTERED (id),
     CONSTRAINT fk_messages_conversation FOREIGN KEY (conversation_id)
         REFERENCES conversations (id) ON DELETE NO ACTION,
-    CONSTRAINT fk_messages_sender FOREIGN KEY (sender_id)
-        REFERENCES users (id) ON DELETE NO ACTION,
     CONSTRAINT fk_messages_reply_to FOREIGN KEY (reply_to_message_id)
         REFERENCES messages (id) ON DELETE NO ACTION,
     CONSTRAINT ck_messages_type CHECK (message_type IN ('TEXT', 'IMAGE', 'VIDEO', 'DOCUMENT', 'AUDIO'))
