@@ -2,6 +2,7 @@ package com.whatsapp.chatservice.controller;
 
 import com.whatsapp.chatservice.constant.ApiConstants;
 import com.whatsapp.chatservice.dto.request.CreateConversationRequest;
+import com.whatsapp.chatservice.dto.request.CreateGroupRequest;
 import com.whatsapp.chatservice.dto.response.ConversationDetailResponse;
 import com.whatsapp.chatservice.dto.response.ConversationResponse;
 import com.whatsapp.chatservice.service.ConversationService;
@@ -52,6 +53,18 @@ public class ConversationController {
         log.info("GET /chats/conversations for user: {}", userId);
         List<ConversationResponse> responses = conversationService.getConversations(userId);
         return ResponseEntity.ok(responses);
+    }
+
+    @PostMapping("/group")
+    public ResponseEntity<ConversationResponse> createGroup(
+            Authentication authentication,
+            @Valid @RequestBody CreateGroupRequest request) {
+        UUID userId = extractUserId(authentication);
+        log.info("POST /chats/conversations/group - create group for user: {}", userId);
+        ConversationResponse response = conversationService.createGroup(userId, request);
+        return ResponseEntity
+                .created(URI.create(ApiConstants.API_CONVERSATIONS_PATH + "/" + response.id()))
+                .body(response);
     }
 
     @GetMapping("/{id}")

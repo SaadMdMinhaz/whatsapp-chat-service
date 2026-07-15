@@ -1,6 +1,7 @@
 package com.whatsapp.chatservice.service.impl;
 
 import com.whatsapp.chatservice.dto.request.CreateConversationRequest;
+import com.whatsapp.chatservice.dto.request.CreateGroupRequest;
 import com.whatsapp.chatservice.dto.response.ConversationDetailResponse;
 import com.whatsapp.chatservice.dto.response.ConversationResponse;
 import com.whatsapp.chatservice.dto.response.MessageResponse;
@@ -93,10 +94,13 @@ public class ConversationServiceImpl implements ConversationService {
 
         List<ConversationResponse> responses = new ArrayList<>();
         for (ConversationListProjection p : projections) {
+            boolean isGroup = "GROUP".equals(p.getConversationType());
+            UUID otherUserId = isGroup ? p.getConversationId() : p.getOtherUserId();
+            String displayName = isGroup ? p.getConversationName() : p.getOtherUserDisplayName();
             ParticipantResponse otherUser = new ParticipantResponse(
-                    p.getOtherUserId(),
+                    otherUserId,
                     null,
-                    p.getOtherUserDisplayName(),
+                    displayName,
                     p.getOtherUserProfilePictureUrl()
             );
 
@@ -153,6 +157,44 @@ public class ConversationServiceImpl implements ConversationService {
                 conversation.getId(),
                 conversation.getType(),
                 participantResponses,
+                conversation.getCreatedAt(),
+                conversation.getUpdatedAt(),
+                conversation.getName()
+        );
+    }
+
+    @Override
+    public ConversationResponse createGroup(UUID userId, CreateGroupRequest request) {
+        log.info("Creating group conversation '{}' by user {} with {} participants",
+                request.name(), userId, request.participantIds().size());
+
+        Conversation conversation = new Conversation();
+        conversation.setType(ConversationType.GROUP);
+        conversation.setName(request.name());
+        conversation = conversationRepository.save(conversation);
+
+        ConversationParticipant creator = new ConversationParticipant();
+        creator.setConversation(conversation);
+        creator.setUserId(userId);
+        participantRepository.save(creator);
+
+        for (UUID pid : request.participantIds()) {
+            if (pid.equals(userId)) continue;
+            ConversationParticipant cp = new ConversationParticipant();
+            cp.setConversation(conversation);
+            cp.setUserId(pid);
+            participantRepository.save(cp);
+        }
+
+        ParticipantResponse groupInfo = new ParticipantResponse(
+                conversation.getId(), null, request.name(), null);
+
+        return new ConversationResponse(
+                conversation.getId(),
+                conversation.getType(),
+                groupInfo,
+                null,
+                0,
                 conversation.getCreatedAt(),
                 conversation.getUpdatedAt()
         );

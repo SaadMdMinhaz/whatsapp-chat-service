@@ -64,12 +64,13 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
         OtherUsers AS (
             SELECT
                 cp1.conversation_id,
-                cp2.user_id AS other_user_id
+                MIN(cp2.user_id) AS other_user_id
             FROM conversation_participants cp1
             JOIN conversation_participants cp2
                 ON cp1.conversation_id = cp2.conversation_id
             WHERE cp1.user_id = :userId
               AND cp2.user_id <> :userId
+            GROUP BY cp1.conversation_id
         )
         SELECT
             c.id AS conversationId,
@@ -83,7 +84,8 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
             COALESCE(uc.unread_count, 0) AS unreadCount,
             ou.other_user_id AS otherUserId,
             CAST(NULL AS NVARCHAR(100)) AS otherUserDisplayName,
-            CAST(NULL AS NVARCHAR(500)) AS otherUserProfilePictureUrl
+            CAST(NULL AS NVARCHAR(500)) AS otherUserProfilePictureUrl,
+            c.name AS conversationName
         FROM conversations c
         JOIN UserConversations uc2 ON c.id = uc2.conversation_id
         LEFT JOIN LastMessages lm ON c.id = lm.conversation_id AND lm.rn = 1

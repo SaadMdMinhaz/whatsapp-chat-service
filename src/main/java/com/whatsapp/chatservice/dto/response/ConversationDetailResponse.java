@@ -10,6 +10,7 @@ public record ConversationDetailResponse(
         ConversationType type,
         List<ParticipantResponse> participants,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        String name
 ) {
 }

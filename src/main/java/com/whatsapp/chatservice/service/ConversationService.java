@@ -1,6 +1,7 @@
 package com.whatsapp.chatservice.service;
 
 import com.whatsapp.chatservice.dto.request.CreateConversationRequest;
+import com.whatsapp.chatservice.dto.request.CreateGroupRequest;
 import com.whatsapp.chatservice.dto.response.ConversationDetailResponse;
 import com.whatsapp.chatservice.dto.response.ConversationResponse;
 
@@ -10,6 +11,8 @@ import java.util.UUID;
 public interface ConversationService {
 
     ConversationResponse createOrGetConversation(UUID userId, CreateConversationRequest request);
+
+    ConversationResponse createGroup(UUID userId, CreateGroupRequest request);
 
     List<ConversationResponse> getConversations(UUID userId);
 

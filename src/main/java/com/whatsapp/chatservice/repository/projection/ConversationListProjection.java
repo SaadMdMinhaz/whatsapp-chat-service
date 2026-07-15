@@ -16,4 +16,5 @@ public interface ConversationListProjection {
     UUID getOtherUserId();
     String getOtherUserDisplayName();
     String getOtherUserProfilePictureUrl();
+    String getConversationName();
 }
