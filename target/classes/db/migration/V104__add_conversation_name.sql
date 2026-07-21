@@ -1,2 +1,0 @@
-ALTER TABLE conversations
-ADD name NVARCHAR(100) NULL;
